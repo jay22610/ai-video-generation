@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Video Studio – Generate Realistic Videos</title>
+
+  <!-- Meta Tags for SEO -->
+  <meta name="description" content="Generate realistic AI videos from text prompts instantly. Free plan available. Powered by HeyGen API." />
+  <meta name="keywords" content="AI video generation, text to video, SaaS, HeyGen alternative, video creation tool" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Open Graph for Social Sharing -->
+  <meta property="og:title" content="AI Video Studio – Create Realistic Videos From Text" />
+  <meta property="og:description" content="No avatars. No fake presenters. Just realistic scenes generated from text using HeyGen & ElevenLabs." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ai-video-mwhd.vercel.app " />
+  <meta property="og:image" content="https://placehold.co/600x350/4F46E5/FFFFFF?text=AI+Video+Generator" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src=" https://cdn.tailwindcss.com "></script>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+  <!-- Header -->
+  <header class="py-6 px-6 md:px-10 flex justify-between items-center bg-white shadow-sm sticky top-0 z-50">
+    <h1 class="text-xl font-bold text-indigo-600">AI Video Studio</h1>
+    <nav class="space-x-6 hidden md:flex">
+      <a href="/how-it-works.html" class="hover:text-indigo-600 transition">How It Works</a>
+      <a href="/pricing.html" class="hover:text-indigo-600 transition">Pricing</a>
+      <a href="/dashboard.html" class="hover:text-indigo-600 transition">Dashboard</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-20 px-6 md:px-10 text-center max-w-5xl mx-auto">
+    <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6">
+      Generate Realistic Videos From Text Prompts Instantly
+    </h2>
+    <p class="text-lg text-gray-600 mb-8">
+      Turn your ideas into stunning videos in seconds — no editing skills required.
+    </p>
+    <button class="bg-indigo-600 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 transition shadow-md">
+      Start Creating Free
+    </button>
+  </section>
+
+  <!-- Prompt Input Section -->
+  <section class="py-16 px-6 md:px-10 max-w-3xl mx-auto">
+    <h3 class="text-2xl font-bold text-center mb-6">Try Our AI Video Generator</h3>
+    <p class="text-center text-gray-600 mb-6">Describe what you want to see below</p>
+
+    <textarea id="prompt-input"
+      placeholder="Example: A futuristic city at night with flying cars and neon lights"
+      rows="4"
+      class="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:indigo-500 mb-4"
+    ></textarea>
+
+    <button onclick="generateVideo()" id="generate-button" class="w-full bg-indigo-600 text-white px-5 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
+      Generate Video
+    </button>
+  </section>
+
+  <!-- How It Works -->
+  <section id="features" class="py-20 px-6 md:px-10 bg-white">
+    <div class="max-w-6xl mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-4">How It Works</h3>
+      <p class="text-lg text-gray-600 mb-10">We use real AI tools like CogVideoX, Runway ML, and ElevenLabs to generate videos based on your description.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+        <!-- Step 1 -->
+        <div class="p-6 border rounded-lg shadow-sm hover:shadow-md transition duration-300">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-indigo-600 font-bold text-xl">1</span>
+          </div>
+          <h4 class="font-semibold text-xl mb-2">Describe Your Scene</h4>
+          <p class="text-gray-600">Type in what you want to see — characters, actions, settings</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-6 border rounded-lg shadow-sm hover:shadow-md transition duration-300">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-indigo-600 font-bold text-xl">2</span>
+          </div>
+          <h4 class="font-semibold text-xl mb-2">Generate Your Video</h4>
+          <p class="text-gray-600">Our system connects to CogVideoX API and generates a short animated clip</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-6 border rounded-lg shadow-sm hover:shadow-md transition duration-300">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-indigo-600 font-bold text-xl">3</span>
+          </div>
+          <h4 class="font-semibold text-xl mb-2">Download & Share</h4>
+          <p class="text-gray-600">Export in HD and share your masterpiece anywhere online</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 md:px-10 bg-white border-t text-center text-gray-500 mt-16">
+    &copy; {new Date().getFullYear()} AI Video Studio • All rights reserved
+  </footer>
+
+  <!-- Stripe Script -->
+  <script>
+    async function handleCheckout(plan) {
+      const stripePlans = {
+        starter: 'price_1OZgXXXXXXXXXXXXX',
+        pro: 'price_1OZhXXXXXXXXXXXXX'
+      };
+
+      try {
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ priceId: stripePlans[plan] })
+        });
+
+        const session = await response.json();
+        window.location.href = session.url;
+      } catch (error) {
+        alert("Failed to start checkout");
+        console.error(error);
+      }
+    }
+
+    function generateVideo() {
+      const prompt = document.getElementById('prompt-input').value.trim();
+      if (!prompt) return alert("Please enter a detailed prompt");
+
+      alert("Your video will be generated shortly!");
+    }
+  </script>
+</body>
+</html>

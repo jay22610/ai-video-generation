@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard – AI Video Studio</title>
+  <script src="https://cdn.tailwindcss.com "></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js "></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js "></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js "></script>
+
+  <!-- Firebase Auth Script -->
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "your-project-id"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let userData = null;
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      const userDocRef = db.collection('users').doc(user.uid);
+      const doc = await userDocRef.get();
+
+      if (doc.exists) {
+        userData = doc.data();
+        updateDashboard(userData);
+      } else {
+        userData = {
+          plan: 'Free',
+          credits: 3,
+          videos: []
+        };
+        userDocRef.set(userData);
+        updateDashboard(userData);
+      }
+    });
+
+    function updateDashboard(data) {
+      document.getElementById('user-plan').innerText = data.plan;
+      document.getElementById('credits-left').innerText = data.credits;
+      document.getElementById('plan-badge').className =
+        data.plan === 'Pro' ? 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800' :
+        data.plan === 'Starter' ? 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800' :
+        'inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800'
+
+      const historyContainer = document.getElementById('video-history');
+      historyContainer.innerHTML = '';
+
+      if (userData.videos && userData.videos.length > 0) {
+        userData.videos.forEach(video => {
+          const item = document.createElement('div');
+          item.className = 'border-b pb-3 pt-3';
+          item.innerHTML = `
+            <p class="font-medium">${video.title}</p>
+            <span class="text-xs text-gray-500">${new Date(video.date).toLocaleDateString()}</span>
+          `;
+          historyContainer.appendChild(item);
+        });
+      } else {
+        historyContainer.innerHTML = '<p class="text-gray-500 text-sm">No videos yet.</p>';
+      }
+    }
+  </script>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm p-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-indigo-600">AI Video Studio</h1>
+    <div class="text-right">
+      <p class="font-semibold">alex@example.com</p>
+      <span id="plan-badge" class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+        Plan: <span id="user-plan">Loading...</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+
+    <!-- Left Sidebar -->
+    <div class="md:col-span-1 space-y-6">
+      <!-- Credits Card -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Your Credits</h2>
+        <div class="flex items-center justify-between">
+          <span class="text-3xl font-bold" id="credits-left">Loading...</span>
+          <span class="text-sm text-gray-500">credits left</span>
+        </div>
+        <button onclick="upgradePlan()" class="mt-4 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">
+          Upgrade Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Side – Generate New Video -->
+    <div class="md:col-span-2 space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Generate a New Video</h2>
+        <textarea id="prompt-input" rows="4" placeholder="Describe what you want to see..." class="w-full p-4 border border-gray-300 rounded mb-4"></textarea>
+        <button onclick="generateVideo()" id="generate-button" class="w-full bg-indigo-600 text-white py-3 rounded font-semibold hover:bg-indigo-700 transition">
+          Generate Video
+        </button>
+      </div>
+
+      <!-- Video History -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Your Video History</h2>
+        <ul id="video-history" class="space-y-4">
+          <li class="text-sm text-gray-500">No videos yet.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="p-6 text-center text-sm text-gray-500 mt-10">
+    &copy; {new Date().getFullYear()} AI Video Studio • All rights reserved
+  </footer>
+
+  <!-- Firebase Dashboard Script -->
+  <script>
+    async function generateVideo() {
+      const promptInput = document.getElementById('prompt-input');
+      const prompt = promptInput.value.trim();
+      if (!prompt) return alert("Please enter a prompt");
+
+      const newVideo = {
+        title: prompt.substring(0, 30),
+        date: new Date().toISOString(),
+        url: '#' // Replace with real HeyGen video URL later
+      };
+
+      userData.videos.push(newVideo);
+      userData.credits -= 1;
+
+      await firebase.firestore()
+        .collection('users')
+        .doc(auth.currentUser.uid)
+        .update({
+          credits: userData.credits,
+          videos: [...userData.videos]
+        });
+
+      updateDashboard(userData);
+      promptInput.value = '';
+      alert("Video added to your history!");
+    }
+
+    function upgradePlan() {
+      window.location.href = "/pricing.html";
+    }
+  </script>
+</body>
+</html>
