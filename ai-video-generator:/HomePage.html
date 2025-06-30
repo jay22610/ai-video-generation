@@ -5,12 +5,19 @@
   <title>AI Video Studio – Generate AI Videos from Text</title>
 
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Generate AI videos from text prompts instantly – no editing skills required. Free plan available." />
-  <meta name="keywords" content="AI video generation, text to video, SaaS, HeyGen alternative, video creation tool" />
+  <meta name="description" content="Generate AI videos from text prompts instantly. Free plan available." />
+  <meta name="keywords" content="AI video generation, text to video, SaaS, HeyGen alternative" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com "></script>
+  <!-- Open Graph / Social Media Preview -->
+  <meta property="og:title" content="AI Video Studio – Create Realistic Videos From Text" />
+  <meta property="og:description" content="No avatars. No fake presenters. Just realistic scenes generated from text using HeyGen API." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ai-video-generation-pzyj.vercel.app " />
+  <meta property="og:image" content="https://placehold.co/600x350/4F46E5/FFFFFF?text=AI+Video+Generator" />
+
+  <!-- TailwindCSS CDN -->
+  <script src=" https://cdn.tailwindcss.com "></script>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
@@ -43,20 +50,9 @@
       class="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:indigo-500 mb-4"
     ></textarea>
 
-    <button onclick="generateVideo()" id="generate-button" class="w-full bg-indigo-600 text-white px-5 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
+    <button onclick="generateVideo()" class="w-full bg-indigo-600 text-white px-5 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
       Generate Video
     </button>
-
-    <!-- Loader -->
-    <div id="loader" class="hidden flex items-center justify-center mt-4">
-      <span class="text-indigo-600">Generating... (this may take 30–60 seconds)</span>
-    </div>
-
-    <!-- Video Preview -->
-    <div id="video-preview" class="mt-6 hidden">
-      <h4 class="font-semibold mb-2">Your Generated Video:</h4>
-      <img id="video-result" src="" alt="Generated Video Preview" class="w-full h-auto rounded shadow" />
-    </div>
   </section>
 
   <!-- Pricing Section -->
@@ -91,7 +87,7 @@
             <li>✔ No watermark</li>
             <li>✔ Voiceover support</li>
           </ul>
-          <a href="#" onclick="handleCheckout('starter')" class="block w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
+          <a href="/login.html" class="block w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
             Subscribe Now
           </a>
         </div>
@@ -107,7 +103,7 @@
             <li>✔ Custom branding</li>
             <li>✔ Template access</li>
           </ul>
-          <a href="#" onclick="handleCheckout('pro')" class="block w-full bg-indigo-100 text-indigo-600 py-2 rounded-md hover:bg-indigo-200 transition">
+          <a href="/login.html" class="block w-full bg-indigo-100 text-indigo-600 py-2 rounded-md hover:bg-indigo-200 transition">
             Subscribe Now
           </a>
         </div>
@@ -120,49 +116,16 @@
     &copy; {new Date().getFullYear()} AI Video Studio • All rights reserved
   </footer>
 
-  <!-- Stripe Script -->
+  <!-- JS Script -->
   <script>
-    async function handleCheckout(plan) {
-      const stripePlans = {
-        starter: 'price_1OZgXXXXXXXXXXXXX',
-        pro: 'price_1OZhXXXXXXXXXXXXX'
-      };
-
-      try {
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ priceId: stripePlans[plan] })
-        });
-
-        const session = await response.json();
-        window.location.href = session.url;
-      } catch (error) {
-        alert("Failed to start checkout");
-        console.error(error);
-      }
-    }
-
     function generateVideo() {
       const prompt = document.getElementById('prompt-input').value.trim();
-      const loader = document.getElementById('loader');
-      const preview = document.getElementById('video-preview');
-
       if (!prompt) {
-        alert("Please enter a detailed prompt.");
+        alert("Please enter a prompt");
         return;
       }
 
-      loader.classList.remove('hidden');
-
-      setTimeout(() => {
-        // Simulate realistic video preview
-        document.getElementById('video-result').src = "https://picsum.photos/600/350?random=1";
-        loader.classList.add('hidden');
-        preview.classList.remove('hidden');
-      }, 2000);
+      alert("Your video will be generated shortly!");
     }
   </script>
 </body>
